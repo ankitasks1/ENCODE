@@ -61,7 +61,7 @@ process REMOVEBLACKLISTBED_1{
 
 
 process CONCATENATEBED_1 {
-    cpus 10
+    cpus 8
     tag "Concat all files"
     publishDir params.outdir_1, mode: 'copy'
     input:
@@ -128,7 +128,7 @@ process REMOVEBLACKLISTBED_2{
 
 
 process CONCATENATEBED_2 {
-    cpus 10
+    cpus 8
     tag "Concat all files"
     publishDir params.outdir_2, mode: 'copy'
     input:
