@@ -173,7 +173,7 @@ process INTERSECT{
 
 
 process WRITEOUTPUT{
-    tag "Intersect one bed with other one files"
+    tag "Write output"
     publishDir params.outdir, mode: 'copy'
 
     input:
