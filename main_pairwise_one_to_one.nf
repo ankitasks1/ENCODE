@@ -1,3 +1,5 @@
+#!/usr/bin/env nextflow
+
 params.input_1 = "$projectDir/samplelist_1.txt"
 params.outdir_1 = "$projectDir/allouts_1/"
 params.input_2 = "$projectDir/samplelist_2.txt"
@@ -54,7 +56,6 @@ process REMOVEBLACKLISTBED_1{
     script:
     """
     bedtools intersect -a ${bedfile_1}_filt.bed -b $blacklist -v >  ${bedfile_1}_filt_freeblack.bed
-    rm -r "${params.outdir_1}/${bedfile_1}_filt.bed" # full path is required because it not the declaration block eg. input /output of nextflow
     """
 }
 
@@ -122,7 +123,6 @@ process REMOVEBLACKLISTBED_2{
     script:
     """
     bedtools intersect -a ${bedfile_2}_filt.bed -b $blacklist -v >  ${bedfile_2}_filt_freeblack.bed
-    rm -r "${params.outdir_2}/${bedfile_2}_filt.bed" # full path is required because it not the declaration block eg. input /output of nextflow
     """
 }
 
