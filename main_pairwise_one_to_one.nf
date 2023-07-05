@@ -41,7 +41,6 @@ process FILTERBED_1{
 }
 
 process REMOVEBLACKLISTBED_1{
-
     tag "Remove blacklisted regions from each bed files"
     publishDir params.outdir_1, mode: 'copy'
     input:
@@ -151,7 +150,7 @@ process INTERSECT{
     path(pairs)
 
     output:
-    stdout
+    path "intersect_out.txt"
 
     script:
 
@@ -167,26 +166,26 @@ process INTERSECT{
     COUNT_BEDORG_1=\$(cat "${params.inputdir}\${BEDORG_1}" | wc -l)
     COUNT_BEDORG_2=\$(cat "${params.inputdir}\${BEDORG_2}" | wc -l)
     INTERSECT=\$(bedtools intersect -a "${params.outdir_1}/${pairs[0]}" -b "${params.outdir_2}/${pairs[1]}" -wa -wb | cut -f4 | sort -k1,1 -u | wc -l)
-    echo "\${BEDNAME_1}\t\${BEDNAME_2}\t\${COUNT_BEDORG_1}\t\${COUNT_BEDORG_2}\t\${COUNT_BEDCLEANED_1}\t\${COUNT_BEDCLEANED_2}\t\${INTERSECT}" 
+    echo "\${BEDNAME_1}\t\${BEDNAME_2}\t\${COUNT_BEDORG_1}\t\${COUNT_BEDORG_2}\t\${COUNT_BEDCLEANED_1}\t\${COUNT_BEDCLEANED_2}\t\${INTERSECT}" >> intersect_out.txt
     """
 }
 
 
-process WRITEOUTPUT{
-    tag "Write output"
-    publishDir params.outdir, mode: 'copy'
+// process WRITEOUTPUT{
+//     tag "Write output"
+//     publishDir params.outdir, mode: 'copy'
 
-    input:
-    file(intersect_out)
+//     input:
+//     file(intersect_out)
 
-    output:
-    path "${params.finalout}"
+//     output:
+//     stdout
 
-    script:
-    """
-    cat ${intersect_out} > ${params.finalout}
-    """
-}
+//     script:
+//     """
+//     cat ${intersect_out} 
+//     """
+// }
 
 workflow{
 
@@ -241,6 +240,6 @@ workflow{
 
     intersect_ch = INTERSECT(pair_ch).collect()
 
-    intersectout_ch = WRITEOUTPUT(intersect_ch)
+    // intersectout_ch = WRITEOUTPUT(intersect_ch)
 
 }

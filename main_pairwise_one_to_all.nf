@@ -60,6 +60,22 @@ process REMOVEBLACKLISTBED_1{
     """
 }
 
+process COUNTFILTERED_1{
+    tag "Count blacklisted regions from each bed files"
+    publishDir params.outdir_1, mode: 'copy'
+    input:
+    path(bedfile_1)
+    path "${bedfile_1}_filt_freeblack_1.bed"
+
+    output:
+    stdout
+
+    script:
+    """
+    python ${params.scripts}peakcounter.py --inputfile "${bedfile_1}_filt_freeblack_1.bed" --location other --processed_file ${params.outdir_1} --type cleaned_1
+    python ${params.scripts}peakcounter.py --inputfile "${bedfile_1}" --location current_1 --currentpath ${params.inputdir} --type original_1
+    """
+}
 
 process CONCATENATEBED_1 {
     cpus 8
@@ -128,6 +144,22 @@ process REMOVEBLACKLISTBED_2{
     """
 }
 
+process COUNTFILTERED_2{
+    tag "Count blacklisted regions from each bed files"
+    publishDir params.outdir_2, mode: 'copy'
+    input:
+    path(bedfile_2)
+    path "${bedfile_2}_filt_freeblack_2.bed"
+
+    output:
+    stdout
+
+    script:
+    """
+    python ${params.scripts}peakcounter.py --inputfile "${bedfile_2}_filt_freeblack_2.bed" --location other --processed_file ${params.outdir_2} --type cleaned_2
+    python ${params.scripts}peakcounter.py --inputfile "${bedfile_2}" --location current_2 --currentpath ${params.inputdir} --type original_2
+    """
+}
 
 process CONCATENATEBED_2 {
     cpus 8
@@ -152,14 +184,13 @@ process INTERSECTWITHMERGED{
     publishDir params.outdir, mode: 'copy'
     input:
     path(pairs)
-    path "merged_bedfiles_2.bed"
 
     output:
     path "${pairs[0]}_int_merged_bedfiles_2.bed"
 
     script:
     """
-    bedtools intersect -a "${params.outdir_1}/${pairs[0]}"  -b "merged_bedfiles_2.bed" -wa -wb > "${pairs[0]}_int_merged_bedfiles_2.bed"
+    bedtools intersect -a "${params.outdir_1}/${pairs[0]}"  -b "${params.outdir_2}/${pairs[1]}" -wa -wb > "${pairs[0]}_int_merged_bedfiles_2.bed"
     """
 }
 
@@ -208,13 +239,21 @@ workflow{
     //     .view{ it }
 
     individual_beds_1_ch = READSHEET_1(sheet_1_ch)
+    individual_beds_1_ch
+        .view()
     cleanbedup_1_ch = FILTERBED_1(individual_beds_1_ch)
     blacklistfreebed_1_ch = REMOVEBLACKLISTBED_1(individual_beds_1_ch, cleanbedup_1_ch, params.blacklist)
     blacklistfreebed_1_ch
             .collect()
             .set { bedfile_1_ch } //for collecting all bedfiles name in one channel
     
-    // bedfile_1_ch.view()
+    blacklistfreebed_1_ch
+        .view()
+    
+    bedfile_1_ch.view()
+    count_filtered_1_ch = COUNTFILTERED_1(individual_beds_1_ch, bedfile_1_ch)
+    // count_filtered_1_ch
+    //     .view()
 
     concatbed_1_ch = CONCATENATEBED_1(bedfile_1_ch)
     // concatbed_1_ch
@@ -236,7 +275,11 @@ workflow{
     blacklistfreebed_2_ch
             .collect()
             .set { bedfile_2_ch } //for collecting all bedfiles name in one channel
-    
+
+    count_filtered_2_ch = COUNTFILTERED_2(individual_beds_2_ch, bedfile_2_ch)
+    // count_filtered_2_ch
+    //     .view()
+
     // bedfile_2_ch.view()
     concatbed_2_ch = CONCATENATEBED_2(bedfile_2_ch)
     // concatbed_2_ch
@@ -248,16 +291,16 @@ workflow{
     pair_ch = blacklistfreebed_1_ch.combine(blacklistfreebed_2_ch)
     // pair_ch.view()
 
-    pair_merged_ch = blacklistfreebed_1_ch.combine(blacklistfreebed_2_ch)
-    // pair_merged_ch.view()
+    pair_merged_ch = blacklistfreebed_1_ch.combine(concatbed_2_ch)
+    pair_merged_ch.view() 
 
-    intersectmerged_ch = INTERSECTWITHMERGED(pair_merged_ch, concatbed_2_ch)
-    // intersectmerged_ch
-    //     .view()
-    countintersectmerged_ch = COUNTINTERSECTWITHMERGED(pair_merged_ch,intersectmerged_ch).collect()
-    countintersectmerged_ch
-        .collect()
-        .set {outcountintersectmerged_ch}
-    intersectout_ch = WRITEOUTPUT(outcountintersectmerged_ch)
+    intersectmerged_ch = INTERSECTWITHMERGED(pair_merged_ch)
+    intersectmerged_ch
+        .view()
+    // countintersectmerged_ch = COUNTINTERSECTWITHMERGED(pair_merged_ch,intersectmerged_ch).collect()
+    // countintersectmerged_ch
+    //     .collect()
+    //     .set {outcountintersectmerged_ch}
+    // // intersectout_ch = WRITEOUTPUT(outcountintersectmerged_ch)
 
 }

@@ -29,32 +29,25 @@ CAP_1 = {}
 CAPs_int = {}
 elements2 = []
 with open(''.join(args.processed_merged_2 + args.inputfile)) as myfile:
+
     myfile = myfile.readlines()
     myfile_count = len(myfile)
     for lines in myfile:
         lines = lines.strip().split('\t')
-        CAP_1[lines[11]] = CAPs_int
         elements2.append(''.join(lines[3] + "_" + lines[23]))
         elements2 = list(set(elements2))
         countresult = count_items_with_substring(elements2, lines[23])
         CAPs_int[lines[23]] = countresult
+        CAP_1[lines[11]] = CAPs_int
+
 
 for CAPf in CAP_1:
     for intCAPf in CAP_1[CAPf]:
-        with open(''.join(args.currentpath + CAPf  + '_peaks_id.bed' ), 'r') as oc1: 
-            original_count_1 = len(oc1.readlines())
-        with open(''.join(args.currentpath + intCAPf  + '_peaks_id.bed' ), 'r') as oc2: 
-            original_count_2 = len(oc2.readlines())
-        with open(''.join(args.processed_file_1 + CAPf  + '_peaks_id.bed_filt_freeblack_1.bed' ), 'r') as cc1: 
-            cleaned_count_1 = len(cc1.readlines())
-        with open(''.join(args.processed_file_2 + intCAPf  + '_peaks_id.bed_filt_freeblack_2.bed' ), 'r') as cc2: 
-            cleaned_count_2 = len(cc2.readlines())
-        
-        print(''.join(str(CAPf) + '\t' + str(intCAPf) + '\t' + str(original_count_1) + '\t' + str(original_count_2) + '\t' + str(cleaned_count_1) + '\t' + str(cleaned_count_2) + '\t' + str(CAP_1[CAPf][intCAPf])))
+        print(''.join(str(CAPf) + '\t' + str(intCAPf) + str(CAP_1[CAPf][intCAPf])))
         # remove if output file already exist
         if os.path.exists(''.join(str(args.processed_merged_2) + CAPf + '_' + intCAPf + '.count.txt')):
             os.remove(''.join(str(args.processed_merged_2) + CAPf + '_' + intCAPf + '.count.txt'))
         with open(''.join(str(args.processed_merged_2) + CAPf + '_' + intCAPf + '.count.txt'), 'a') as myoutfile:
-            myoutfile.write(''.join(str(CAPf) + '\t' + str(intCAPf) + '\t' + str(original_count_1) + '\t' + str(original_count_2) + '\t' + str(cleaned_count_1) + '\t' + str(cleaned_count_2) + '\t' + str(CAP_1[CAPf][intCAPf]) + '\n'))
+            myoutfile.write(''.join(str(CAPf) + '\t' + str(intCAPf) + '\t' + str(CAP_1[CAPf][intCAPf])+ '\n'))
             myoutfile.close()
     
