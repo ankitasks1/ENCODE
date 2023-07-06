@@ -43,7 +43,7 @@ with open(''.join(args.processed_merged_2 + args.inputfile)) as myfile:
 
 for CAPf in CAP_1:
     for intCAPf in CAP_1[CAPf]:
-        print(''.join(str(CAPf) + '\t' + str(intCAPf) + str(CAP_1[CAPf][intCAPf])))
+        print(''.join(str(CAPf) + '\t' + str(intCAPf) + '\t' + str(CAP_1[CAPf][intCAPf])))
         # remove if output file already exist
         if os.path.exists(''.join(str(args.processed_merged_2) + CAPf + '_' + intCAPf + '.count.txt')):
             os.remove(''.join(str(args.processed_merged_2) + CAPf + '_' + intCAPf + '.count.txt'))
