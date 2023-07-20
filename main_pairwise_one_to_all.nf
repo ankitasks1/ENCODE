@@ -8,8 +8,46 @@ params.outdir = "$projectDir/merged_out/"
 params.inputdir = "$projectDir/"
 params.blacklist = "$projectDir/dummy_blacklist.bed"
 params.finalout = "intersected_one_all.txt"
+params.intersectout = "intersected.counts.txt"
 params.scripts = "$projectDir/"
+params.currentdir = "$projectDir/"
+params.parameters = ""
+params.help = ""
 
+// Show parameters message and exit
+if (params.parameters){
+    parameters()
+    exit 0
+}
+
+
+if (params.help){
+    helpmessage()
+    exit 0
+}
+
+def parameters() {
+log.info """\
+    PAIRWISER ONE TO ALL - N F   P I P E L I N E
+    =============================================
+    Current Directory         : ${params.currentdir}
+    Scripts Directory         : ${params.scripts}
+    Samplesheet 1 Path        : ${params.input_1}
+    Samplesheet 2 Path        : ${params.input_2}
+    Output 1 Directory        : ${params.outdir_1}
+    Output 2 Directory        : ${params.outdir_2}
+    Blacklist                 : ${params.blacklist}
+    """
+    .stripIndent()
+}
+
+def helpmessage() {
+log.info """\
+
+usage: nextflow run main_pairwise_one_to_all.nf --input_1 /mnt/home3/reid/av638/ENCODE/pairwise/samplelist_1.txt --input_2 /mnt/home3/reid/av638/ENCODE/pairwise/samplelist_2.txt --blacklist /mnt/home3/reid/av638/ENCODE/pairwise/blacklistgrch38_ENCFF356LFX.bed
+
+""".stripIndent()
+}
 
 process READSHEET_1{
     tag 'Reading content of sheet'
@@ -62,7 +100,7 @@ process REMOVEBLACKLISTBED_1{
 }
 
 process COUNTFILTERED_1{
-    tag "Count blacklisted regions from each bed files"
+    tag "Count original and cleaned-up regions from each bed files"
     publishDir params.outdir_1, mode: 'copy'
     input:
     path(bedfile_1)
@@ -73,8 +111,8 @@ process COUNTFILTERED_1{
 
     script:
     """
-    python ${params.scripts}peakcounter.py --inputfile "${bedfile_1}_filt_freeblack_1.bed" --location other --processed_file ${params.outdir_1} --type cleaned_1
-    python ${params.scripts}peakcounter.py --inputfile "${bedfile_1}" --location current_1 --currentpath ${params.inputdir} --type original_1
+    python3 ${params.scripts}peakcounter.py --inputfile "${bedfile_1}_filt_freeblack_1.bed" --location other --processed_file ${params.outdir_1} --type cleaned_1
+    python3 ${params.scripts}peakcounter.py --inputfile "${bedfile_1}" --location current_1 --currentpath ${params.inputdir} --type original_1
     """
 }
 
@@ -146,7 +184,7 @@ process REMOVEBLACKLISTBED_2{
 }
 
 process COUNTFILTERED_2{
-    tag "Count blacklisted regions from each bed files"
+    tag "Count original and cleaned-up regions from each bed files"
     publishDir params.outdir_2, mode: 'copy'
     input:
     path(bedfile_2)
@@ -157,8 +195,8 @@ process COUNTFILTERED_2{
 
     script:
     """
-    python ${params.scripts}peakcounter.py --inputfile "${bedfile_2}_filt_freeblack_2.bed" --location other --processed_file ${params.outdir_2} --type cleaned_2
-    python ${params.scripts}peakcounter.py --inputfile "${bedfile_2}" --location current_2 --currentpath ${params.inputdir} --type original_2
+    python3 ${params.scripts}peakcounter.py --inputfile "${bedfile_2}_filt_freeblack_2.bed" --location other --processed_file ${params.outdir_2} --type cleaned_2
+    python3 ${params.scripts}peakcounter.py --inputfile "${bedfile_2}" --location current_2 --currentpath ${params.inputdir} --type original_2
     """
 }
 
@@ -195,6 +233,7 @@ process INTERSECTWITHMERGED{
     """
 }
 
+
 process COUNTINTERSECTWITHMERGED{
     tag "Intersect one bed with other merged files"
     publishDir params.outdir, mode: 'copy'
@@ -203,31 +242,29 @@ process COUNTINTERSECTWITHMERGED{
     path "${pairs[0]}_int_merged_bedfiles_2.bed"
 
     output:
-    stdout
-    //nexflow will write standard output from here to separate file each time print in python executed
+    val "${params.intersectout}"
 
     script:
     """
-    python ${params.scripts}paircounter.py --inputfile "${pairs[0]}_int_merged_bedfiles_2.bed" --currentpath ${params.inputdir} --processed_file_1 ${params.outdir_1} --processed_file_2 ${params.outdir_2} --processed_merged_2 ${params.outdir}
+    python3 ${params.scripts}paircounter.py --inputfile "${pairs[0]}_int_merged_bedfiles_2.bed" --currentpath ${params.inputdir} --processed_file_1 ${params.outdir_1} --processed_file_2 ${params.outdir_2} --processed_merged_2 ${params.outdir} --outputbase ${params.intersectout}
     """
 }
 
-// process WRITEOUTPUT{
-//     tag "write count files to output"
-//     publishDir params.outdir, mode: 'copy'
+process WRITEOUTPUT{
+    tag "write all count files to output"
+    publishDir params.outdir, mode: 'copy'
 
+    input:
+    file 'combinecounts.py'
 
-//     input:
-//     path $vector
+    output:
+    val "${params.finalout}"
 
-//     output:
-//     path "${params.finalout}"
-
-//     script:
-//     """
-//     python ${params.scripts}combinecounts.py --currentpath ${params.inputdir} --processed_file_1 ${params.outdir_1} --processed_file_2 ${params.outdir_2} --processed_merged_2 ${params.outdir} --output ${params.finalout}
-//     """
-// }
+    script:
+    """
+    python3 ${params.scripts}combinecounts.py --currentpath ${params.inputdir} --processed_file_1 ${params.outdir_1} --processed_file_2 ${params.outdir_2} --processed_merged_2 ${params.outdir} --output ${params.finalout}
+    """
+}
 
 workflow{
 
@@ -237,41 +274,40 @@ workflow{
         .map{ row -> file(row.beds) }
         .set{ sheet_1_ch }
 
-    sheet_1_ch
-        .view{ it }
+    // sheet_1_ch
+    //     .view{ it }
 
     individual_beds_1_ch = READSHEET_1(sheet_1_ch)
-    individual_beds_1_ch
-        .view()
+    // individual_beds_1_ch
+    //     .view()
     cleanbedup_1_ch = FILTERBED_1(individual_beds_1_ch)
     blacklistfreebed_1_ch = REMOVEBLACKLISTBED_1(individual_beds_1_ch, cleanbedup_1_ch, params.blacklist)
     blacklistfreebed_1_ch
             .collect()
             .set { bedfile_1_ch } //for collecting all bedfiles name in one channel
     
-    blacklistfreebed_1_ch
-        .view()
+    // blacklistfreebed_1_ch
+    //     .view()
     
-    bedfile_1_ch.view()
+    // bedfile_1_ch.view()
     count_filtered_1_ch = COUNTFILTERED_1(individual_beds_1_ch, bedfile_1_ch)
-    count_filtered_1_ch
-        .view()
+    // count_filtered_1_ch
+    //     .view()
 
     concatbed_1_ch = CONCATENATEBED_1(bedfile_1_ch)
-    concatbed_1_ch
-        .view()
+    // concatbed_1_ch
+    //     .view()
 
     Channel
         .fromPath(params.input_2)
         .splitCsv(header: true)
         .map{ row -> file(row.beds) }
         .set{ sheet_2_ch }
-
-    sheet_2_ch
-        .view{ it }
+    // sheet_2_ch
+    //     .view{ it }
 
     individual_beds_2_ch = READSHEET_2(sheet_2_ch)
-    individual_beds_2_ch.view()
+    // individual_beds_2_ch.view()
     cleanbedup_2_ch = FILTERBED_2(individual_beds_2_ch)
     blacklistfreebed_2_ch = REMOVEBLACKLISTBED_2(individual_beds_2_ch, cleanbedup_2_ch, params.blacklist)
     blacklistfreebed_2_ch
@@ -279,35 +315,36 @@ workflow{
             .set { bedfile_2_ch } //for collecting all bedfiles name in one channel
 
     count_filtered_2_ch = COUNTFILTERED_2(individual_beds_2_ch, bedfile_2_ch)
-    count_filtered_2_ch
-        .view()
+    // count_filtered_2_ch
+    //     .view()
 
     // bedfile_2_ch.view()
     concatbed_2_ch = CONCATENATEBED_2(bedfile_2_ch)
-    concatbed_2_ch
-        .view()
+    // concatbed_2_ch
+    //     .view()
 
     // blacklistfreebed_1_ch.view()
     // blacklistfreebed_2_ch.view()
 
     pair_ch = blacklistfreebed_1_ch.combine(blacklistfreebed_2_ch)
-    pair_ch.view()
+    // pair_ch.view()
 
     pair_merged_ch = blacklistfreebed_1_ch.combine(concatbed_2_ch)
-    pair_merged_ch.view() 
+    // pair_merged_ch.view() 
 
     intersectmerged_ch = INTERSECTWITHMERGED(pair_merged_ch).collect()
-    intersectmerged_ch
-        .view()
+    // intersectmerged_ch
+    //     .view()
+   
+
     countintersectmerged_ch = COUNTINTERSECTWITHMERGED(pair_merged_ch,intersectmerged_ch).collect()
     countintersectmerged_ch
         .collect()
         .set {outcountintersectmerged_ch}
     
-    count_filtered_1_ch.view()
-    count_filtered_2_ch.view()
-    outcountintersectmerged_ch.view()
+    // count_filtered_1_ch.view()
+    // count_filtered_2_ch.view()
+    // outcountintersectmerged_ch.view()
 
-    // outputfinal_ch = WRITEOUTPUT(outcountintersectmerged_ch)
-
+    outputfinal_ch = WRITEOUTPUT(outcountintersectmerged_ch)
 }
