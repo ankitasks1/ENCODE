@@ -4,6 +4,7 @@
 # Pairwise clustering among CAPs
 ## Step1: Modify original bed file to add sample name inside bed file content
 <code> python3 get_protein_info.py </code>
+##### this will generate new_script_to_add_id.sh that need to be executed
 <code> ./new_script_to_add_id.sh </code>
 
 ## Step2: Run nextflow script (developed for nextflow version >23; java > 11)
