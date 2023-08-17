@@ -95,7 +95,7 @@ process REMOVEBLACKLISTBED_1{
 
     script:
     """
-    bedtools intersect -a ${bedfile_1}_filt_1.bed -b $blacklist -v >  ${bedfile_1}_filt_freeblack_1.bed
+    bedtools intersect -a ${params.outdir_1}${bedfile_1}_filt_1.bed -b $blacklist -v >  ${bedfile_1}_filt_freeblack_1.bed
     """
 }
 
@@ -179,7 +179,7 @@ process REMOVEBLACKLISTBED_2{
 
     script:
     """
-    bedtools intersect -a ${bedfile_2}_filt_2.bed -b $blacklist -v >  ${bedfile_2}_filt_freeblack_2.bed
+    bedtools intersect -a ${params.outdir_2}${bedfile_2}_filt_2.bed -b $blacklist -v >  ${bedfile_2}_filt_freeblack_2.bed
     """
 }
 
