@@ -1,5 +1,5 @@
 import os,sys
-
+# usage: python deduplicate_bedfiles.py  bedfiles.txt samplelist_1.txt
 bedfiles = {}
 newlist = {}
 # Make a dictionary of CAPs and respective bed files
