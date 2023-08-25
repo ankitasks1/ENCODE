@@ -153,11 +153,11 @@ write.table(humap2_complexes_20200809_re, "/mnt/home3/reid/av638/tutorial/cluste
 python3 benchmarkagain_complex.py dump.data.mci.I20 humap2_complexes_20200809_re.txt  | perl -ne 'chomp;@a=split/\t/;print "$_\n" if $a[5] >= 0.5'
 python3 benchmarkagain_complex.py dump.data.mci.I20 humap2_complexes_20200809_re.txt  | perl -ne 'chomp;@a=split/\t/;print "$_\n" if $a[5] >= 1 && $a[4] >= 1'
 
-# Relaxed cutoffs
+#### Relaxed cutoffs
 python3 benchmarkagain_complex.py dump.data.mci.I20 humap2_complexes_20200809_re.txt  | perl -ne 'chomp;@a=split/\t/;print "$_\n" if $a[5] >= 0.5'
 
-# ----> Note Taking column 4 from python3 benchmarkagain_complex.py   command output will help to understand KNOWN interactors 
-# ----> Note Taking column 3 from python3 benchmarkagain_complex.py   command output will help to understand UNKNOWN interactors 
+##### ----> Note Taking column 4 from python3 benchmarkagain_complex.py   command output will help to understand KNOWN interactors 
+#### ----> Note Taking column 3 from python3 benchmarkagain_complex.py   command output will help to understand UNKNOWN interactors 
 
 
 
