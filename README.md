@@ -47,7 +47,7 @@ echo "Analysis Finished"
 
 
 
-## Step5: Run nextflow script (developed for nextflow version >23; java > 11) (Note: This nextflow script version 4 will generate upto summit file filtered by quality, blacklist and hotspot regions)
+## Step5: Run nextflow script (developed for nextflow version >23; java > 11) (Note: This nextflow script version 5 will generate upto end count file after filtered by quality, blacklist and hotspot regions)
 <code> 
 conda activate nextflow_v23
 </code>
