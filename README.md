@@ -106,6 +106,9 @@ write.table(summit_mydata_p1_cbh_mg_re, "/mnt/home3/reid/av638/ENCODE/summit_pai
 summit_mydata_p1_cbh_mg_re.gt100 <- summit_mydata_p1_cbh_mg_re[which(summit_mydata_p1_cbh_mg_re$score >= 100),]
 write.table(summit_mydata_p1_cbh_mg_re.gt100, "/mnt/home3/reid/av638/ENCODE/summit_pairwise/summit_mydata_p1_cbh_mg_re.gt100.txt", sep="\t", append = F, quote = F, row.names = F, col.names = F)
 
+#### A SUMMIT OVERLAP MATRIX can bed produced from here for heirarchical clustering
+
+
 ## Step7: Use graph based clustering to identify complexes
 ##### Cluster data with MCL
 mcxload -abc summit_mydata_p1_cbh_mg_re.gt100.txt --stream-mirror -write-tab data.tab -o data.mci 
@@ -161,7 +164,8 @@ python3 benchmarkagain_complex.py dump.data.mci.I20 humap2_complexes_20200809_re
 
 
 
-## Additional steps: Binding pattern of CAPs in genomic sites (To find highly occupied regions)
+## Additional steps: Binding pattern of CAPs in genomic sites (To find highly occupied regions) OCCUPANCY MATRIX
+### Hot spopt regions were also identified by using approach in which peak is divided by window size and rounded-off to defined as occupancy:
 <code> python makebins_from_peaks_q.py --input fsample_list.txt --blacklist blacklistgrch38_ENCFF356LFX.bed --gbinsize 1000 --output gbin_1000_peaks_encode_out.txt </code>
 
 ### Hot spopt regions were also identified by using the following approach:
