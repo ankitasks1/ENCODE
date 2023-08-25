@@ -165,7 +165,7 @@ python3 benchmarkagain_complex.py dump.data.mci.I20 humap2_complexes_20200809_re
 
 
 ## Additional steps: Binding pattern of CAPs in genomic sites (To find highly occupied regions) OCCUPANCY MATRIX
-### Hot spopt regions were also identified by using approach in which peak is divided by window size and rounded-off to defined as occupancy:
+### Hot spopt regions were  identified by using approach in which peak is divided by window size and rounded-off to defined as occupancy:
 <code> python makebins_from_peaks_q.py --input fsample_list.txt --blacklist blacklistgrch38_ENCFF356LFX.bed --gbinsize 1000 --output gbin_1000_peaks_encode_out.txt </code>
 
 ### Hot spopt regions were also identified by using the following approach:
@@ -175,15 +175,20 @@ python3 benchmarkagain_complex.py dump.data.mci.I20 humap2_complexes_20200809_re
 #### Choose cutoff windows
 #### Choose 1000 bp as suggested and select
 #### ./find_hotspot_region.sh
+<code>
 bedtools makewindows -g hg38.chrom.sizes -w 1000 > hg38_1000bp.txt
 awk '{print $1"\t"$2"\t"$3"\t"$1"%"$2"%"$3}' hg38_1000bp.txt >  hg38_1000bp_merged.txt
 bedtools intersect -wa -wb -a MERGED_final_cat_peaking.sorted.bed -b hg38_1000bp_merged.txt > MERGED_final_cat_peaking.sorted_hg38_1000bp.bed
 awk '{print $12"%"$16}' MERGED_final_cat_peaking.sorted_hg38_1000bp.bed  | sort -k1,1 -u | awk -F'%' '{print $1"\t"$2"%"$3"%"$4}' > MERGED_final_cat_peaking.sorted_hg38_1000bp_justbound.bed
+</code>
 
 #### Remove histone and iva data
+<code>
 fgrep -f sample_to_removeinternal_from_list.txt MERGED_final_cat_peaking.sorted_hg38_1000bp_justbound.bed -w -v > MERGED_final_cat_peaking.sorted_hg38_1000bp_justbound_selected.bed
+</code>
 
 #### Run this R script to count and merge the coordinates and filter less than 50 proteins inside (find_hotspot_bound_regions.R)
+<code>
 library(dplyr)
 library(tidyr)
 library(stringr)
@@ -213,9 +218,9 @@ merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50 <- merged_enco
 head(merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50)
 dim(merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50)
 write.table(merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50, "merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50.txt", sep="\t", append = F,quote=F, col.names=T, row.names = F)
+</code>
 
-
-Note: merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50.txt contains regions which are 1000 bp and bound by >=50 CAPs. So this file will be used for selecting only those peaks from all CAPs which intersect with these regions.
+###### Note: merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50.txt contains regions which are 1000 bp and bound by >=50 CAPs. So this file will be used for selecting only those peaks from all CAPs which intersect with these regions.
 
 
 
