@@ -226,5 +226,7 @@ write.table(merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50, "
 ###### Note: merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50.txt contains regions which are 1000 bp and bound by >=50 CAPs. So this file will be used for selecting only those peaks from all CAPs which intersect with these regions.
 
 # Summit-based occupany matrix
+<code>
 nextflow run main_summit_occupancy_v1.nf --input_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/samplelist_1.txt --blacklist_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/blacklistgrch38_ENCFF356LFX_1.bed
+</code>
 
