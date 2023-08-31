@@ -165,8 +165,11 @@ python3 benchmarkagain_complex.py dump.data.mci.I20 humap2_complexes_20200809_re
 
 
 ## Additional steps: Binding pattern of CAPs in genomic sites (To find highly occupied regions) OCCUPANCY MATRIX
-### Hot spopt regions were  identified by using approach in which peak is divided by window size and rounded-off to defined as occupancy:
+### Hot spopt regions were  identified by using approach in which peak's start and end is divided by window size and rounded-off to defined as occupancy:
 <code> python makebins_from_peaks_q.py --input fsample_list.txt --blacklist blacklistgrch38_ENCFF356LFX.bed --gbinsize 1000 --output gbin_1000_peaks_encode_out.txt </code>
+
+### Hot spopt regions were  identified by using approach in which summit's start and end is divided by window size and rounded-off to defined as occupancy:
+<code> python makebins_from_summit_q.py --input fsample_list.txt --blacklist blacklistgrch38_ENCFF356LFX.bed --gbinsize 1000 --output gbin_1000_summit_encode_out.txt </code>
 
 ### Hot spopt regions were also identified by using the following approach:
 
