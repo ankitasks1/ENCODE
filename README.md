@@ -227,6 +227,8 @@ write.table(merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50, "
 
 # Summit-based occupany matrix
 <code>
-nextflow run main_summit_occupancy_v1.nf --input_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/samplelist_1.txt --blacklist_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/blacklistgrch38_ENCFF356LFX_1.bed
+conda activate nextflow_v23
+ 
+/mnt/home3/reid/av638/ENCODE/slurm_sub_re.py nextflow run main_summit_occupancy_v1.nf --input_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/samplelist_1.txt --blacklist_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/blacklistgrch38_ENCFF356LFX_1.bed
 </code>
 
