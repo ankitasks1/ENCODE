@@ -1,5 +1,74 @@
 # ENCODE
 
+# Summit-based occupany matrix
+
+## Step 0:  Requirements
+#### Installtions: bedtools (latest version), python (v3), nextflow (>v23), java (>v11), mcl (latest version), Rscript, R (>4.2)
+#### Note: full path input files should be given always eg.  /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/samplelist_1.txt
+#### Bedfiles should have 12 columns with score on column 7 and identifier of file at 12th column
+#### We used q-value based filtering, which is column 9 in macs output but when I make a compatible file, I add peak_ID to column 4 and name of sample to column 12, so 10-based output of MACS2 becomes 12-bed file. So value to filter is at 10th column ( 1.3)  = -log10(0.05)
+
+## Step 1: Modify original bed file to add sample name inside bed file content
+<code> python3 get_protein_info.py </code>
+
+##### Note: this will generate new_script_to_add_id.sh that need to be executed
+
+<code> ./new_script_to_add_id.sh </code>
+
+##### Specific nextflow environment
+<code>
+conda activate nextflow_v23
+</code>
+
+## Step 2: Generate bins of summit based
+<code>
+/mnt/home3/reid/av638/ENCODE/slurm_sub_re.py -j job_400 nextflow run main_summit_occupancy_v4.nf --input_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/samplelist_1.txt --blacklist_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/blacklistgrch38_ENCFF356LFX_1.bed --gbinsize 400 --outdir_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/allouts_1_400/ -c /mnt/home3/nextflow/gurdon.config
+</code>
+  
+#### R script to calculate coassociatio score using hypergeometric test
+<code>
+Rscript /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/scripts/calculate_coassociation_score.R /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/allouts_1_400/ gbin_400_summit_encode_out.txt gbin_400_total_sites_bound_summit_hsrfree_mat_st_h_re
+</code>
+
+#### R script to calculate coassociatio score using Possion distribution test
+<code>
+Rscript /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/scripts/calculate_pois_coassociation_score.R /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/allouts_1_400/ gbin_400_summit_encode_out.txt gbin_400_total_sites_bound_summit_hsrfree_mat_st_pois_re
+</code>
+
+### Outputs:
+In your working directory:
+1. Count of all peaks
+   original_1.count1.txt
+
+In allout_1_400
+1. summit bin files for all given bed files
+2. Count of cleaned peaks
+   cleaned_1.count.txt
+3. R script outputs for different hotspot regions cutoffs
+gbin_400_total_sites_bound_summit_hsrfree_mat_st_h_re_100.txt
+gbin_400_total_sites_bound_summit_hsrfree_mat_st_h_re_25.txt
+gbin_400_total_sites_bound_summit_hsrfree_mat_st_h_re_10.txt
+gbin_400_total_sites_bound_summit_hsrfree_mat_st_h_re_50.txt
+
+#### Note the rscript will generate some exploratory figures too.
+#### Detail description about codes can be obtained either seeing below R codes or directily opening calculate_coassociation_score.R
+
+# MCL clustering
+# mcl
+mcxload -abc gbin_400_total_sites_bound_summit_hsrfree_mat_st_h_re.txt --stream-mirror -write-tab data.tab -o data.mci 
+mcl data.mci -I 1.4
+mcl data.mci -I 2
+mcl data.mci -I 4
+mcl data.mci -I 8
+mcl data.mci -I 16
+mcl data.mci -I 20
+
+mcxdump -icl out.data.mci.I14 -tabr data.tab -o dump.data.mci.I14
+mcxdump -icl out.data.mci.I20 -tabr data.tab -o dump.data.mci.I20
+mcxdump -icl out.data.mci.I40 -tabr data.tab -o dump.data.mci.I40
+mcxdump -icl out.data.mci.I80 -tabr data.tab -o dump.data.mci.I80
+mcxdump -icl out.data.mci.I160 -tabr data.tab -o dump.data.mci.I160
+mcxdump -icl out.data.mci.I200 -tabr data.tab -o dump.data.mci.I200
 
 # Pairwise clustering among CAPs
 ## Step1: Modify original bed file to add sample name inside bed file content
@@ -225,17 +294,5 @@ write.table(merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50, "
 
 ###### Note: merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50.txt contains regions which are 1000 bp and bound by >=50 CAPs. So this file will be used for selecting only those peaks from all CAPs which intersect with these regions.
 
-# Summit-based occupany matrix
 
-#### Installtions: bedtools (latest version), python (v3), nextflow (>v23), java (>v11)
-<code>
-conda activate nextflow_v23
-# cluster_multiplebins
-/mnt/home3/reid/av638/ENCODE/slurm_sub_re.py -j job_200 nextflow run main_summit_occupancy_v4.nf --input_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/samplelist_1.txt --blacklist_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/blacklistgrch38_ENCFF356LFX_1.bed --gbinsize 200 --outdir_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/allouts_1_200/ -c /mnt/home3/nextflow/gurdon.config
-
-# R multiplebins
-Rscript /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/scripts/calculate_coassociation_score.R /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/allouts_1_200/ gbin_200_summit_encode_out.txt gbin_200_total_sites_bound_summit_hsrfree_mat_st_h_re
-
-
-</code>
 
