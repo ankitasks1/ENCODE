@@ -226,9 +226,16 @@ write.table(merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50, "
 ###### Note: merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50.txt contains regions which are 1000 bp and bound by >=50 CAPs. So this file will be used for selecting only those peaks from all CAPs which intersect with these regions.
 
 # Summit-based occupany matrix
+
+#### Installtions: bedtools (latest version), python (v3), nextflow (>v23), java (>v11)
 <code>
 conda activate nextflow_v23
- 
-/mnt/home3/reid/av638/ENCODE/slurm_sub_re.py nextflow run main_summit_occupancy_v1.nf --input_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/samplelist_1.txt --blacklist_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/blacklistgrch38_ENCFF356LFX_1.bed
+# cluster_multiplebins
+/mnt/home3/reid/av638/ENCODE/slurm_sub_re.py -j job_200 nextflow run main_summit_occupancy_v4.nf --input_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/samplelist_1.txt --blacklist_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/blacklistgrch38_ENCFF356LFX_1.bed --gbinsize 200 --outdir_1 /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/allouts_1_200/ -c /mnt/home3/nextflow/gurdon.config
+
+# R multiplebins
+Rscript /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/scripts/calculate_coassociation_score.R /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/allouts_1_200/ gbin_200_summit_encode_out.txt gbin_200_total_sites_bound_summit_hsrfree_mat_st_h_re
+
+
 </code>
 
