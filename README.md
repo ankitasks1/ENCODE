@@ -41,7 +41,7 @@ In your working directory:
    original_1.count1.txt
 
 In allout_1_400
-1. summit bin files for all given bed files
+1. summit bin files for all given bed files and some intermediate files
 2. Count of cleaned peaks
    cleaned_1.count.txt
 3. R script outputs for different hotspot regions cutoffs
@@ -50,12 +50,14 @@ gbin_400_total_sites_bound_summit_hsrfree_mat_st_h_re_25.txt
 gbin_400_total_sites_bound_summit_hsrfree_mat_st_h_re_10.txt
 gbin_400_total_sites_bound_summit_hsrfree_mat_st_h_re_50.txt
 
-#### Note the rscript will generate some exploratory figures too.
+#### Note the rscript will generate some exploratory figures too in pdf.
 #### Detail description about codes can be obtained either seeing below R codes or directily opening calculate_coassociation_score.R
 
-# MCL clustering
-# mcl
+## Step 3: MCL clustering
+:-mcl can be performed  directly on Rscript output:
 mcxload -abc gbin_400_total_sites_bound_summit_hsrfree_mat_st_h_re.txt --stream-mirror -write-tab data.tab -o data.mci 
+
+:-run mcl for different inflation values
 mcl data.mci -I 1.4
 mcl data.mci -I 2
 mcl data.mci -I 4
@@ -63,12 +65,15 @@ mcl data.mci -I 8
 mcl data.mci -I 16
 mcl data.mci -I 20
 
+:-run mcxdump
 mcxdump -icl out.data.mci.I14 -tabr data.tab -o dump.data.mci.I14
 mcxdump -icl out.data.mci.I20 -tabr data.tab -o dump.data.mci.I20
 mcxdump -icl out.data.mci.I40 -tabr data.tab -o dump.data.mci.I40
 mcxdump -icl out.data.mci.I80 -tabr data.tab -o dump.data.mci.I80
 mcxdump -icl out.data.mci.I160 -tabr data.tab -o dump.data.mci.I160
 mcxdump -icl out.data.mci.I200 -tabr data.tab -o dump.data.mci.I200
+
+
 
 # Pairwise clustering among CAPs
 ## Step1: Modify original bed file to add sample name inside bed file content
