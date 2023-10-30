@@ -5,7 +5,7 @@
 ## Step 0:  Requirements
 #### Installtions: bedtools (latest version), python (v3), nextflow (>v23), java (>v11), mcl (latest version), Rscript, R (>4.2)
 #### Note: full path input files should be given always eg.  /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/samplelist_1.txt
-#### Bedfiles should have 12 columns with score on column 7 and identifier of file at 12th column
+#### Bedfiles should have 12 columns with score on column 10 and identifier of file at 12th column
 #### We used q-value based filtering, which is column 9 in macs output but when I make a compatible file, I add peak_ID to column 4 and name of sample to column 12, so 10-based output of MACS2 becomes 12-bed file. So value to filter is at 10th column ( 1.3)  = -log10(0.05)
 
 ## Step 1: Modify original bed file to add sample name inside bed file content
