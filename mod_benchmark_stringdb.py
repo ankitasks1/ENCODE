@@ -21,15 +21,16 @@ with open(comps) as c:
         complexes[v[0]] = set(prots)
 
 # print(complexes)
-
+# print(len(complexes))
 
 with open(hits) as h:
     for x in h.readlines():
         x = x.rstrip()
         prots = x.split('\t')
-        # print(prots)
+        protscap = prots[:2]
+        # print(protscap)
         names = list()
-        for i in prots:
+        for i in protscap:
             # print(i)
             names.append(i)
         # print(names)
@@ -40,12 +41,7 @@ with open(hits) as h:
         for y in complexes:
             inter = complexes[y].intersection(prot_set)
             # print(complexes[y], prot_set)
+            # print(inter)
             if len(inter) > 1:
-                #print ("{}\t{}".format(y, inter))
-                # sens = number of known complex members found / total complex members 
-                sens = len(inter) / len(complexes[y])
-                # spec = number of correct complex members / size of predicted complex
-                spec = len(inter) / len(prot_set)
-                # print("{}\t{}\t{}\t{}\t{}\t{}".format(y, complexes[y], prot_set, inter, sens, spec))
-                # print(''.join(y + '\t' + complexes[y] + '\t' +  prot_set + '\t' +  inter + '\t' +  sens + '\t' +  spec))
-                print(y  + '\t' + ','.join(complexes[y]) + '\t' +  ','.join(prot_set)  + '\t' +  ','.join(inter) + '\t' +  str(sens) + '\t' +  str(spec))
+                print ("{}\t{}\t{}\t{}".format(complexes[y], prot_set, inter, 'known'))
+
