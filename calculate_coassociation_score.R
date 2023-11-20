@@ -78,7 +78,13 @@ for (hsrcutoff in c(10,25,50,100)){
   
   # sort
   total_sites_bound_gbinsummit_hsrfree_mat_st <- total_sites_bound_gbinsummit_hsrfree_mat_st[order(total_sites_bound_gbinsummit_hsrfree_mat_st$CAP_b),]
-  
+  write.table(total_sites_bound_gbinsummit_hsrfree_mat_st, 
+              paste0(args[3],"_overlapinfo_",hsrcutoff,".txt"), 
+              sep="\t",
+              append = F,
+              quote = F,
+              row.names = T,
+              col.names = T)
   print("Applying Hypergeometric test ....")
   # hypergeometric test based analysis (overlap -1 is required as explained here https://seqqc.wordpress.com/2019/07/25/how-to-use-phyper-in-r/)
   total_sites_bound_gbinsummit_hsrfree_mat_st_h <- total_sites_bound_gbinsummit_hsrfree_mat_st[,c(1:5)]
