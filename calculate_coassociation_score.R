@@ -83,7 +83,7 @@ for (hsrcutoff in c(10,25,50,100)){
               sep="\t",
               append = F,
               quote = F,
-              row.names = T,
+              row.names = F,
               col.names = T)
   print("Applying Hypergeometric test ....")
   # hypergeometric test based analysis (overlap -1 is required as explained here https://seqqc.wordpress.com/2019/07/25/how-to-use-phyper-in-r/)
