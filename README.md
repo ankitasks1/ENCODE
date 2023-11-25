@@ -1,4 +1,10 @@
 # ENCODE
+# Further plan with Encode project 
+1. Take bam and quantify in respective CAPs peaks or see in encode database if it already have files in which reads quantified in peaks.
+2. Create summit using intervals as before and instead of outputting 1 report the read number in the final output file
+3. Create occupancy matrix from 3 columns file
+4. Correlation score calculation 
+5. MCL clustering 
 
 # Summit-based occupany matrix
 
