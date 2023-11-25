@@ -4,7 +4,8 @@
 2. Create summit using intervals as before and instead of outputting 1 report the read number in the final output file
 3. Create occupancy matrix from 3 columns file
 4. Correlation score calculation 
-5. MCL clustering 
+5. MCL clustering
+6. Update nextflow main script accordingly 
 
 # Summit-based occupany matrix
 
