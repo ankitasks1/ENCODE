@@ -1,12 +1,11 @@
 # ENCODE
 # Further plan with Encode project 
-1. Take bam and quantify in respective CAPs peaks or see in encode database if it already have files in which reads quantified in peaks.
-2. Calculate Score how?????????????????
-3. Create summit using intervals as before and instead of outputting 1 report the read number in the final output file
-4. Create occupancy matrix from 3 columns file
-5. Correlation score calculation 
-6. MCL clustering
-7. Update nextflow main script accordingly 
+1. Change the way scores are calculated. Use appropriate test. Calculate Score how?????????????????
+2. Create summit using intervals as before and instead of outputting 1 report the read number in the final output file
+3. Create occupancy matrix from 3 columns file
+4. Correlation score calculation 
+5. MCL clustering, KNN, PCA, UMAP
+6. Update nextflow main script accordingly 
 
 # Summit-based occupany matrix
 
