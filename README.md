@@ -1,11 +1,6 @@
-# ENCODE
-# Further plan with Encode project 
-1. Change the way scores are calculated. Use appropriate test. Calculate Score how?????????????????
-2. Create summit using intervals as before and instead of outputting 1 report the read number in the final output file
-3. Create occupancy matrix from 3 columns file
-4. Correlation score calculation 
-5. MCL clustering, KNN, PCA, UMAP
-6. Update nextflow main script accordingly 
+#  --------------------------------------------------------------  #
+# Project: Predicted Novel Chromatin Complexes using ChIP-Seq data #
+#  --------------------------------------------------------------  #
 
 # Summit-based occupany matrix
 
@@ -37,7 +32,7 @@ conda activate nextflow_v23
 Rscript /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/scripts/calculate_coassociation_score.R /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/allouts_1_400/ gbin_400_summit_encode_out.txt gbin_400_total_sites_bound_summit_hsrfree_mat_st_h_re
 </code>
 
-#### R script to calculate coassociatio score using Possion distribution test
+#### R script to calculate coassociation score using Possion distribution test
 <code>
 Rscript /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/scripts/calculate_pois_coassociation_score.R /mnt/home3/reid/av638/ENCODE/summit_occupancy/K562/execute/allouts_1_400/ gbin_400_summit_encode_out.txt gbin_400_total_sites_bound_summit_hsrfree_mat_st_pois_re
 </code>
@@ -304,6 +299,15 @@ dim(merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50)
 write.table(merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50, "merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50.txt", sep="\t", append = F,quote=F, col.names=T, row.names = F)
 </code>
 
+
+# Further plan with Encode project 
+1. Change the way scores are calculated. Use appropriate test. Calculate Score how?????????????????
+2. Create summit using intervals as before and instead of outputting 1 report the read number in the final output file
+3. Create occupancy matrix from 3 columns file
+4. Correlation score calculation 
+5. MCL clustering, KNN, PCA, UMAP
+6. Update nextflow main script accordingly
+7. 
 ###### Note: merged_encode_peak_count_1000bp_clustered_count_sort_pos_cutoff50.txt contains regions which are 1000 bp and bound by >=50 CAPs. So this file will be used for selecting only those peaks from all CAPs which intersect with these regions.
 
 
